@@ -1,0 +1,59 @@
+//Unused
+float scintillate(float ftime, float phase) {
+ ftime = ftime + phase;
+ if (ftime < -0.5) {
+   ftime = -1.0 - ftime;
+ }
+ else if (ftime > 0.5) {
+   ftime = 1.0 - ftime;
+ }
+ return ftime;
+}
+
+float band(float converge, float band, float ratio) {
+ if (ratio < converge - band) {
+ return 0.0;
+ } else if (ratio < converge) {
+ return (ratio - (converge - band)) / band;
+ } else if (ratio > converge && ratio < converge + band) {
+ return 1.0 - ((ratio - converge) / band);
+ } else return 0.0;
+}
+
+void mainImage( out vec4 fragColor, in vec2 fragCoord )
+{
+    // Normalized pixel coordinates (from 0 to 1)
+    //vec2 uv = fragCoord/iResolution.xy;
+
+    // Time varying pixel color
+    //vec3 col = 0.5 + 0.5*cos(iTime+uv.xyx+vec3(0,2,4));
+
+    // Output to screen
+    //fragColor = vec4(col,1.0);
+
+    vec2 uv = fragCoord.xy;
+    vec2 ratio = fragCoord.xy / iResolution.xy;
+
+    //red
+    //float red = band(0.6 - scintillate(ftime, 0.0) * 0.2,
+    //0.5, ratio.y);
+
+    //green
+    //float green1 = band(0.5 + scintillate(ftime, 0.5) * 0.4,
+    //0.5, ratio.x) * 0.5;
+
+    //float green2 = band(0.5 + scintillate(ftime, -0.5) * 0.4,
+    //0.5, ratio.x) * 0.5;
+
+    //blue
+    //float blue = band(0.4 + scintillate(ftime, 0.0) * 0.2,
+    //0.5, ratio.y);
+
+    float sinewave = sin(3.14 * ratio.x * 2.0 + iTime);
+    float sinewave_y = sin(3.14 * ratio.y * 2.0 + iTime);
+
+    float blue = band(0.5 + sinewave_y * 0.1, 0.5, ratio.x);
+    float red = band(0.5 + sinewave * 0.1, 0.5, ratio.y);
+
+    fragColor = vec4(red, 0.0, blue, 0.0);
+}
